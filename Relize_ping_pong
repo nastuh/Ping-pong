@@ -1,0 +1,56 @@
+import pygame
+
+window = pygame.display.set_mode((700, 700))
+bg = pygame.transform.scale(pygame.image.load('fon.jpg'), (700, 700))
+clock = pygame.time.Clock()
+
+
+class GameSprite(pygame.sprite.Sprite):
+    def __init__(self, image, x, y, w, h, speed):
+        super().__init__()
+        self.image = pygame.transform.scale(pygame.image.load(image), (w, h))
+        self.rect = self.image.get_rect()
+        self.rect.x = x
+        self.rect.y = y
+        self.speed = speed
+
+    def reset(self):
+        window.blit(self.image, self.rect)
+
+
+class Player(GameSprite):
+    def update_l(self):
+        keys = pygame.key.get_pressed()
+        if keys[pygame.K_w] and self.rect.y > 5:
+            self.rect.y -= self.speed
+
+        if keys[pygame.K_s] and self.rect.y < 550:
+            self.rect.y += self.speed
+
+    def update_r(self):
+        keys = pygame.key.get_pressed()
+        if keys[pygame.K_w] and self.rect.y > 5:
+            self.rect.y -= self.speed
+
+        if keys[pygame.K_s] and self.rect.y < 550:
+            self.rect.y += self.speed
+
+
+rocket1 = Player('racket.png', 10, 200, 50, 150, 4)
+rocket2 = Player('racket.png', 640, 200, 50, 150, 4)
+ball = GameSprite('tenis_ball.png', 320, 320, 50, 50, 4)
+
+while True:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            exit()
+
+    window.blit(bg, (0, 0))
+    rocket1.update_l()
+    rocket2.update_r()
+    rocket1.reset()
+    rocket2.reset()
+    ball.reset()
+
+    pygame.display.update()
+    clock.tick(50)
