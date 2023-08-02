@@ -3,6 +3,8 @@ import pygame
 window = pygame.display.set_mode((700, 700))
 bg = pygame.transform.scale(pygame.image.load('fon.jpg'), (700, 700))
 clock = pygame.time.Clock()
+pygame.font.init()
+font1 = pygame.font.SysFont('Arial', 60)
 
 
 class GameSprite(pygame.sprite.Sprite):
@@ -40,17 +42,36 @@ rocket1 = Player('racket.png', 10, 200, 50, 150, 4)
 rocket2 = Player('racket.png', 640, 200, 50, 150, 4)
 ball = GameSprite('tenis_ball.png', 320, 320, 50, 50, 4)
 
+speed_x = 3
+speed_y = 3
+
+finish = False
 while True:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             exit()
+    if not finish:
+        window.blit(bg, (0, 0))
+        rocket1.update_l()
+        rocket2.update_r()
+        rocket1.reset()
+        rocket2.reset()
+        ball.reset()
+        ball.rect.x += speed_x
+        ball.rect.y += speed_y
+        if ball.rect.y > 650 or ball.rect.y < 0:
+            speed_y *= -1
 
-    window.blit(bg, (0, 0))
-    rocket1.update_l()
-    rocket2.update_r()
-    rocket1.reset()
-    rocket2.reset()
-    ball.reset()
+        if pygame.sprite.collide_rect(rocket1, ball) or pygame.sprite.collide_rect(rocket2, ball):
+            speed_x *= -1
+
+        if ball.rect.x < 0:
+            window.blit(font1.render('PLAYER 1 LOSE', True, (255, 0, 0)), (255, 300))
+            finish = True
+
+        if ball.rect.x > 700:
+            window.blit(font1.render('PLAYER 2 LOSE', True, (255, 0, 0)), (255, 300))
+            finish = True
 
     pygame.display.update()
     clock.tick(50)
